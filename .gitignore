@@ -1,55 +1,60 @@
-# Prerequisites
-*.d
-
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
+###################################
+# ASP.NET Core / .NET Core
+###################################
+[Bb]in/
+[Oo]bj/
 *.pdb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Packages
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+!**/[Pp]ackages/lib/
+!**/[Pp]ackages/tools/
+[Pp]ackages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
 
-# debug information files
-*.dwo
+# Logs
+*.log
+[Ll]ogs/
+
+# Test results
+TestResults/
+*.trx
+
+# Publish/Deployment
+[Pp]ublish/
+[Ww]eb[Dd]eploy/
+
+# Data
+*.sqlite
+*.db
+
+###################################
+# Visual Studio / IDE
+###################################
+# Visual Studio 2017+
+.vs/
+!/.vs/License
+!/.vs/TestStore
+
+# Rider (JetBrains IDE)
+.idea/
+
+###################################
+# Docker & Containers
+###################################
+# Ignore configuration overrides that may contain secrets
+# The main docker-compose.yml should NOT be ignored.
+docker-compose.override.yml
+docker-compose.local.yml
+*.dockerignore
+
+# Build output
+/dist/
+/out/
