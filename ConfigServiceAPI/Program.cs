@@ -10,6 +10,7 @@ DotNetEnv.Env.Load();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.UseAllOfToExtendReferenceSchemas();
@@ -59,16 +60,18 @@ builder.Services.AddScoped<VariablesRepository>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 app.UseMiddleware<BasicAuthMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ServiceConfigAPIDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
