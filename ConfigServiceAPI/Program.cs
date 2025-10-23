@@ -1,3 +1,4 @@
+using ConfigServiceAPI.Authentication;
 using ConfigServiceAPI.Persistance;
 using ConfigServiceAPI.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+DotNetEnv.Env.Load();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -12,8 +14,31 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.UseAllOfToExtendReferenceSchemas();
     options.SupportNonNullableReferenceTypes();
+
+    options.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        In = ParameterLocation.Header,
+        Description = "Autenticación básica con usuario y contraseña"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            new List<string>()
+        }
+    });
 });
-DotNetEnv.Env.Load();
 
 
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
@@ -41,6 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<BasicAuthMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
