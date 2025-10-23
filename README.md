@@ -2,12 +2,12 @@
 Este proyecto implementa un servicio RESTful de gestión de configuración dinámica. Su propósito es desacoplar variables de entorno, feature flags, y credenciales de las aplicaciones cliente, permitiendo la actualización de configuraciones sin necesidad de reiniciar la aplicación.
 Está construido con .NET (ASP.NET Core) y utiliza Docker Compose para orquestar la API junto con su base de datos PostgreSQL en un entorno multi-contenedor.
 
-##🔗 Repositorio
+## 🔗 Repositorio
 
 Puedes encontrar el código fuente completo y los archivos de configuración en:
 https://github.com/JACKATANA/ServicioWeb.git
 
-##🚀 Tecnologías Principales
+## 🚀 Tecnologías Principales
 
 
 Componente
@@ -23,13 +23,13 @@ Orquestación
 Docker y Docker Compose
 Automatizar la construcción, el despliegue y la interconexión de los servicios.
 
-⚙️ Guía de Configuración y Despliegue
+## ⚙️ Guía de Configuración y Despliegue
 Sigue estos pasos para levantar el servicio de API y la base de datos en tu entorno local.
-###1. Requisitos Previos
+### 1. Requisitos Previos
 Asegúrate de tener instalado y configurado:
 Docker Desktop (incluye Docker Engine y Docker Compose).
 Un editor de texto.
-###2. Clonar el Repositorio
+### 2. Clonar el Repositorio
 Clona este repositorio en tu máquina local y navega al directorio del proyecto:
 git clone [https://github.com/JACKATANA/ServicioWeb.git](https://github.com/JACKATANA/ServicioWeb.git)
 cd ServicioWeb/
@@ -38,7 +38,7 @@ cd ServicioWeb/
 
 
 
-###3. Crear el Archivo de Variables de Entorno (.env)
+### 3. Crear el Archivo de Variables de Entorno (.env)
 El servicio utiliza un archivo .env para gestionar las credenciales de la base de datos y la autenticación de la API.
 
 Crea un nuevo archivo llamado .env en el directorio donde se encuentra tu docker-compose.yaml  y añade la siguiente estructura, reemplazando los valores de ejemplo con tus propios secretos REALES:
@@ -58,7 +58,7 @@ BASIC_AUTH_PASS=TU_SECRETO_AUTH_BASICA
 
 
 
-###4. Construir y Ejecutar el Servicio
+### 4. Construir y Ejecutar el Servicio
 Para construir las imágenes de Docker y levantar todos los servicios (API y PostgreSQL):
 Ubicarse en el directorio principal donde esté el docker-compose.yaml.
 Ejecutar el comando de despliegue:
@@ -67,7 +67,7 @@ docker-compose up --build -d
 up: Crea y arranca los contenedores.
 --build: Fuerza la reconstrucción de la imagen de .NET.
 -d: Ejecuta los contenedores en segundo plano (detached mode).
-###5. Acceso y Documentación del Servicio
+### 5. Acceso y Documentación del Servicio
 Una vez que los contenedores estén operativos (verifica su estado con docker-compose ps):
 API Base URL: http://localhost:${API_PORT} (ej. http://localhost:8080)
 Documentación (OpenAPI/Swagger): Accede a la documentación interactiva en http://localhost:${API_PORT}/swagger (depende de la configuración de tu proyecto .NET).
