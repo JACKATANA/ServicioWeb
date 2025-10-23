@@ -22,7 +22,7 @@ namespace ConfigServiceAPI.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ConfigServiceAPI.Models.Enviroment", b =>
+            modelBuilder.Entity("ConfigServiceAPI.Models.Enviroments", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,7 +92,7 @@ namespace ConfigServiceAPI.Migrations
 
             modelBuilder.Entity("ConfigServiceAPI.Models.Variables", b =>
                 {
-                    b.HasOne("ConfigServiceAPI.Models.Enviroment", "Enviroment")
+                    b.HasOne("ConfigServiceAPI.Models.Enviroments", "Enviroment")
                         .WithMany()
                         .HasForeignKey("EnviromentId")
                         .OnDelete(DeleteBehavior.Cascade)
