@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.Extensions.Configuration;
 
 namespace ConfigServiceAPI.Authentication
 {
@@ -15,9 +14,7 @@ namespace ConfigServiceAPI.Authentication
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var config = context.RequestServices.GetRequiredService<IConfiguration>();
-
-            if (!context.Request.Headers.TryGetValue(AuthorizationHeader, out var authHeader) ||
+            if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader) ||
                 !authHeader.ToString().StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -30,7 +27,7 @@ namespace ConfigServiceAPI.Authentication
             var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
             var parts = decoded.Split(':');
 
-            if (parts.Length != 2 || !IsAuthorized(parts[0], parts[1], config))
+            if (parts.Length != 2 || !IsAuthorized(parts[0], parts[1]))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("Credenciales inválidas.");
@@ -40,12 +37,15 @@ namespace ConfigServiceAPI.Authentication
             await _next(context);
         }
 
-        private bool IsAuthorized(string username, string password, IConfiguration config)
+
+        private bool IsAuthorized(string username, string password)
         {
-            var expectedUser = config["BASIC_AUTH_USER"] ?? "admin";
-            var expectedPass = config["BASIC_AUTH_PASS"] ?? "secret";
+            var expectedUser = builder.Configuration["BASIC_AUTH_USER"] ?? "admin";
+            var expectedPass = builder.Configuration["BASIC_AUTH_PASS"] ?? "secret";
 
             return username == expectedUser && password == expectedPass;
         }
     }
+
+
 }
