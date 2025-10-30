@@ -1,0 +1,64 @@
+version: '3.9'
+
+secrets:
+  db_user_passwd:
+    file: ./db_user_passwd
+  basic_auth_user:
+    file: ./basic_auth_user
+  basic_auth_pass:
+    file: ./basic_auth_pass
+
+services:
+  postgres-db:
+    image: postgres:16
+    container_name: config_db
+    restart: always
+    deploy:
+      replicas: 1
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_user_passwd
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    secrets:
+      - db_user_passwd
+    networks:
+      - cfgsycapi_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cfgsycapi:
+    image: angel1707/configserviceapi-api:latest
+    restart: always
+    deploy:
+      replicas: 3
+    ports:
+      - "${API_PORT}:80"
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      CFGSVCAPI_DEBUG: 'false'
+      BASIC_AUTH_USER_FILE: /run/secrets/basic_auth_user
+      BASIC_AUTH_PASS_FILE: /run/secrets/basic_auth_pass
+    secrets:
+      - basic_auth_user
+      - basic_auth_pass
+    networks:
+      - cfgsycapi_net
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=nfssrv01,rw
+      device: ":/data/docker-vols/group07/postgres_data"
+
+networks:
+  cfgsycapi_net:
+    driver: overlay

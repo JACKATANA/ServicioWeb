@@ -1,0 +1,82 @@
+  version: '3.9'
+
+  secrets:
+    db_user_passwd:
+      file: ./db_user_passwd
+    database_url:
+      file: ./database_url
+    cfgsycapi_secret_key:
+      file: ./cfgsycapi_secret_key
+
+  services:
+    postgres-db:
+      image: postgres:17-alpine3.22
+      container_name: config_db
+      restart: always
+      deploy:
+        replicas: 1
+      environment:
+        POSTGRES_DB: ${DATABASES_NAME}
+        POSTGRES_USER: ${DATABASES_USER}
+        POSTGRES_PASSWORD_FILE: /run/secrets/db_user_passwd
+      ports:
+      - "${DB_PORT}:5432"  
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      secrets:
+        - db_user_passwd
+      networks:
+        - cfgsycapi_net
+      networks:
+        - cfgsycapi_net
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+
+    cfgsycapi-migrate:
+      image: angel1707/configserviceapi-api:latest
+      build: .
+      restart: on-failure
+      environment:
+        CFGSVCAPI_DEBUG: 'false'
+        CFGSVCAPI_SECRET_KEY_FILE: /run/secrets/cfgsycapi_secret_key
+        CFGSVCAPI_DATABASE_URL_FILE: /run/secrets/database_url
+        CFGSVCAPI_TIME_ZONE: "America/Caracas"
+      command: "manage.py migrate"
+      secrets:
+        - database_url
+        - cfgsycapi_secret_key
+      networks:
+        - cfgsycapi_net
+
+    cfgsycapi:
+      image: marioramos0/cfgsvg4:1.0
+      restart: always
+      deploy:
+              replicas: 3
+      ports:
+        - ${PORT}:8084
+      environment:
+        CFGSVCAPI_DEBUG: 'false'
+        CFGSVCAPI_SECRET_KEY_FILE: /run/secrets/cfgsycapi_secret_key
+        CFGSVCAPI_DATABASE_URL_FILE: /run/secrets/database_url
+        CFGSVCAPI_TIME_ZONE: "America/Caracas"
+      secrets:
+        - database_url
+        - cfgsycapi_secret_key
+      networks:
+        - cfgsycapi_net
+
+  volumes:
+    postgres_data:
+      driver: local
+      driver_opts:
+        type: nfs
+        o: addr=nfssrv01,rw
+        device: ":/data/docker-vols/group00/postgres_data"
+
+  networks:
+    cfgsycapi_net:
+      driver: overlay

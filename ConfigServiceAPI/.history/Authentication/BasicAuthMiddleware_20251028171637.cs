@@ -42,14 +42,10 @@ namespace ConfigServiceAPI.Authentication
 
         private bool IsAuthorized(string username, string password, IConfiguration config)
         {
-            string? ReadSecret(string path) =>
-                File.Exists(path) ? File.ReadAllText(path).Trim() : null;
-
-            var expectedUser = ReadSecret("/run/secrets/basic_auth_user") ?? config["BASIC_AUTH_USER"];
-            var expectedPass = ReadSecret("/run/secrets/basic_auth_pass") ?? config["BASIC_AUTH_PASS"];
+            var expectedUser = config["BASIC_AUTH_USER"] ?? "admin";
+            var expectedPass = config["BASIC_AUTH_PASS"] ?? "secret";
 
             return username == expectedUser && password == expectedPass;
         }
-
     }
 }
