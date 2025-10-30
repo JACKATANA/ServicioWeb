@@ -39,11 +39,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+string? ReadSecret(string path)
+{
+    return File.Exists(path) ? File.ReadAllText(path).Trim() : null;
+}
+
+
 
 var dbHost = builder.Configuration["DB_HOST"];
 var dbName = builder.Configuration["DB_NAME"];
 var dbUser = builder.Configuration["DB_USER"];
-var dbPassword = builder.Configuration["DB_PASSWORD"];
+var dbPassword = ReadSecret("/run/secrets/db_user_passwd") ?? builder.Configuration["DB_PASSWORD"];
+
 
 var connectionString = $"Host={dbHost};Database={dbName};Username={dbUser};Password={dbPassword}";
 
